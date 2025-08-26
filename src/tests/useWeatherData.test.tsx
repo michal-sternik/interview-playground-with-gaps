@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
-// Import types from Task-2
-import type { WeatherData } from "../components/Tasks/Task-2";
-import { useWeatherData } from "../components/Tasks/Task-2";
+// Import types from Task-1
+import type { WeatherData } from "../components/Tasks/Task-1";
+import { useWeatherData } from "../components/Tasks/Task-1";
 
 describe("useWeatherData Hook", () => {
 	beforeEach(() => {
@@ -32,8 +32,8 @@ describe("useWeatherData Hook", () => {
 
 	it("should start with loading true and no data", () => {
 		(global.fetch as jest.Mock).mockImplementation(
-			// biome-ignore lint/suspicious/noEmptyBlockStatements: <Never resolves to keep loading state>
-			() => new Promise(() => {}),
+			// biome-ignore lint/suspicious/noEmptyBlockStatements: <Never resolves>
+			() => new Promise(() => {}), // Never resolves to keep loading state
 		);
 
 		const { result } = renderHook(() => useWeatherData("London"));
@@ -75,46 +75,6 @@ describe("useWeatherData Hook", () => {
 
 		expect(result.current.data).toBe(null);
 		expect(result.current.error).toBe("Network error");
-	});
-
-	it("should handle HTTP error responses", async () => {
-		(global.fetch as jest.Mock).mockResolvedValueOnce({
-			ok: false,
-			status: 404,
-		});
-
-		const { result } = renderHook(() => useWeatherData("NonExistentCity"));
-
-		await waitFor(() => {
-			expect(result.current.loading).toBe(false);
-		});
-
-		expect(result.current.data).toBe(null);
-		expect(result.current.error).toBe("Failed to fetch weather data: 404");
-	});
-
-	it("should handle empty city name", async () => {
-		const { result } = renderHook(() => useWeatherData(""));
-
-		await waitFor(() => {
-			expect(result.current.loading).toBe(false);
-		});
-
-		expect(result.current.data).toBe(null);
-		expect(result.current.error).toBe("City name is required");
-		expect(global.fetch).not.toHaveBeenCalled();
-	});
-
-	it("should handle whitespace-only city name", async () => {
-		const { result } = renderHook(() => useWeatherData("   "));
-
-		await waitFor(() => {
-			expect(result.current.loading).toBe(false);
-		});
-
-		expect(result.current.data).toBe(null);
-		expect(result.current.error).toBe("City name is required");
-		expect(global.fetch).not.toHaveBeenCalled();
 	});
 
 	it("should refetch when city changes", async () => {

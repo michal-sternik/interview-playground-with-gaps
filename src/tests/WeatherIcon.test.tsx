@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { WeatherIcon } from "../components/Tasks/Task-4";
+import { WeatherIcon } from "../components/Tasks/Task-2";
 
 describe("WeatherIcon Component", () => {
 	it("should render Sun icon for sunny condition", () => {

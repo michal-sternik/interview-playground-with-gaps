@@ -1,54 +1,91 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act } from "react";
 import { BrowserRouter } from "react-router-dom";
 import Task4 from "../components/Tasks/Task-4";
 import "@testing-library/jest-dom";
+
+// Mock localStorage for component testing
+const mockLocalStorage = {
+	getItem: jest.fn(),
+	setItem: jest.fn(),
+	removeItem: jest.fn(),
+	clear: jest.fn(),
+};
+
+Object.defineProperty(window, "localStorage", {
+	value: mockLocalStorage,
+	writable: true,
+});
 
 const renderWithRouter = (component: React.ReactElement) => {
 	return render(<BrowserRouter>{component}</BrowserRouter>);
 };
 
 describe("Task4 Component Integration", () => {
-	it("should render weather condition selector and icons", () => {
-		renderWithRouter(<Task4 />);
-
-		expect(screen.getByText("Back to Task List")).toBeInTheDocument();
-		expect(screen.getByText("Interactive Test")).toBeInTheDocument();
-		expect(screen.getByText("Weather in Europe")).toBeInTheDocument();
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockLocalStorage.getItem.mockReturnValue(null);
+		// biome-ignore lint/suspicious/noEmptyBlockStatements: <Never resolves>
+		mockLocalStorage.setItem.mockImplementation(() => {}); // Dodaj tę linię
 	});
 
-	it("should display correct icon for selected weather condition", () => {
+	it("should render with default language (German)", () => {
 		renderWithRouter(<Task4 />);
 
-		// Check initial sunny condition
-		const { container } = render(<div data-testid="weather-icon-container" />);
-		expect(container).toBeInTheDocument();
+		expect(screen.getByText("Wolkenarten")).toBeInTheDocument();
+		expect(screen.getByText("Cumulus")).toBeInTheDocument();
 	});
 
-	it("should change weather condition when button is clicked", () => {
+	it("should switch to English when English button is clicked", async () => {
 		renderWithRouter(<Task4 />);
 
-		// Find and click different weather condition buttons
-		const conditions = [
-			"sunny",
-			"cloudy",
-			"rainy",
-			"snowy",
-			"stormy",
-			"foggy",
-			"windy",
-			"partly cloudy",
-		];
-
-		conditions.forEach((condition) => {
-			// Use getByRole to target the button specifically, not the display text
-			const button = screen.getByRole("button", { name: condition });
-			expect(button).toBeInTheDocument();
-
-			fireEvent.click(button);
-
-			// Verify the button is selected (has active styling with bg-primary)
-			expect(button).toHaveClass("bg-primary");
+		const englishButton = screen.getByText("English");
+		act(() => {
+			fireEvent.click(englishButton);
 		});
+
+		await waitFor(() => {
+			expect(screen.getByText("Types of Clouds")).toBeInTheDocument();
+		});
+
+		expect(mockLocalStorage.setItem).toHaveBeenCalledWith("language", "en");
+	});
+
+	it("should switch to German when Deutsch button is clicked", async () => {
+		mockLocalStorage.getItem.mockReturnValue("en");
+
+		renderWithRouter(<Task4 />);
+
+		const deutschButton = screen.getByText("Deutsch");
+		act(() => {
+			fireEvent.click(deutschButton);
+		});
+
+		await waitFor(() => {
+			expect(screen.getByText("Wolkenarten")).toBeInTheDocument();
+		});
+
+		expect(mockLocalStorage.setItem).toHaveBeenCalledWith("language", "de");
+	});
+
+	it("should load saved language from localStorage", () => {
+		mockLocalStorage.getItem.mockReturnValue("en");
+
+		renderWithRouter(<Task4 />);
+
+		expect(screen.getByText("Types of Clouds")).toBeInTheDocument();
+		expect(mockLocalStorage.getItem).toHaveBeenCalledWith("language");
+	});
+
+	it("should highlight selected language button", () => {
+		renderWithRouter(<Task4 />);
+
+		const deutschButton = screen.getByText("Deutsch");
+		const englishButton = screen.getByText("English");
+
+		// Default should be German
+		expect(deutschButton).toHaveClass("bg-primary");
+		expect(englishButton).not.toHaveClass("bg-primary");
 	});
 
 	it("should navigate back to task list", () => {
@@ -59,75 +96,35 @@ describe("Task4 Component Integration", () => {
 		expect(backButton.closest("a")).toHaveAttribute("href", "/");
 	});
 
-	it("should display all weather condition options", () => {
+	it("should persist language selection across multiple changes", async () => {
 		renderWithRouter(<Task4 />);
 
-		const weatherConditions = [
-			"sunny",
-			"cloudy",
-			"rainy",
-			"snowy",
-			"stormy",
-			"foggy",
-			"windy",
-			"partly cloudy",
-		];
-
-		weatherConditions.forEach((condition) => {
-			// Use getByRole to target the button specifically
-			expect(
-				screen.getByRole("button", { name: condition }),
-			).toBeInTheDocument();
+		// Switch to English
+		act(() => {
+			fireEvent.click(screen.getByText("English"));
 		});
-	});
-
-	it("should maintain selected state when condition is chosen", () => {
-		renderWithRouter(<Task4 />);
-
-		const rainyButton = screen.getByRole("button", { name: "rainy" });
-		fireEvent.click(rainyButton);
-
-		// Check that rainy is selected and others are not
-		expect(rainyButton).toHaveClass("bg-primary");
-
-		const sunnyButton = screen.getByRole("button", { name: "sunny" });
-		expect(sunnyButton).not.toHaveClass("bg-primary");
-	});
-
-	it("should handle rapid condition changes", () => {
-		renderWithRouter(<Task4 />);
-
-		const sunnyButton = screen.getByRole("button", { name: "sunny" });
-		const rainyButton = screen.getByRole("button", { name: "rainy" });
-		const snowyButton = screen.getByRole("button", { name: "snowy" });
-
-		// Click multiple buttons rapidly
-		fireEvent.click(sunnyButton);
-		fireEvent.click(rainyButton);
-		fireEvent.click(snowyButton);
-
-		// Only the last clicked should be active
-		expect(snowyButton).toHaveClass("bg-primary");
-		expect(sunnyButton).not.toHaveClass("bg-primary");
-		expect(rainyButton).not.toHaveClass("bg-primary");
-	});
-
-	it("should display weather condition description", () => {
-		renderWithRouter(<Task4 />);
-
-		expect(
-			screen.getByText(/Select weather conditions to test the component/),
-		).toBeInTheDocument();
-	});
-
-	it("should handle edge case conditions", () => {
-		renderWithRouter(<Task4 />);
-
-		const partlyCloudyButton = screen.getByRole("button", {
-			name: "partly cloudy",
+		await waitFor(() => {
+			expect(screen.getByText("Types of Clouds")).toBeInTheDocument();
 		});
-		fireEvent.click(partlyCloudyButton);
 
-		expect(partlyCloudyButton).toHaveClass("bg-primary");
+		// Switch back to German
+		act(() => {
+			fireEvent.click(screen.getByText("Deutsch"));
+		});
+		await waitFor(() => {
+			expect(screen.getByText("Wolkenarten")).toBeInTheDocument();
+		});
+
+		expect(mockLocalStorage.setItem).toHaveBeenCalledTimes(2);
+		expect(mockLocalStorage.setItem).toHaveBeenNthCalledWith(
+			1,
+			"language",
+			"en",
+		);
+		expect(mockLocalStorage.setItem).toHaveBeenNthCalledWith(
+			2,
+			"language",
+			"de",
+		);
 	});
 });

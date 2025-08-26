@@ -30,14 +30,14 @@ const RootLayout = () => {
 
 				<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 					<TaskCard
-						title="Task 1: useLocalStorage"
-						description="Create a useLocalStorage hook to change the language of the cloud description page"
+						title="Task 1: useWeatherData"
+						description="Implement a hook to fetch current weather data for a city"
 						link="/task-1"
 					/>
 
 					<TaskCard
-						title="Task 2: useWeatherData"
-						description="Implement a hook to fetch current weather data for a city"
+						title="Task 2: Conditional Rendering"
+						description="Implement logic to display icons based on weather conditions"
 						link="/task-2"
 					/>
 
@@ -48,8 +48,8 @@ const RootLayout = () => {
 					/>
 
 					<TaskCard
-						title="Task 4: Conditional Rendering"
-						description="Implement logic to display icons based on weather conditions"
+						title="Task 4: useLocalStorage"
+						description="Create a useLocalStorage hook to change the language of the cloud description page"
 						link="/task-4"
 					/>
 

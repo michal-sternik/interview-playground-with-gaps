@@ -1,206 +1,237 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { act } from "react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import Task1 from "../components/Tasks/Task-1";
 import "@testing-library/jest-dom";
-
-jest.mock("nanoid", () => ({
-	nanoid: () => `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-}));
-
-// Mock localStorage for component testing
-const mockLocalStorage = {
-	getItem: jest.fn(),
-	setItem: jest.fn(),
-	removeItem: jest.fn(),
-	clear: jest.fn(),
-};
-
-Object.defineProperty(window, "localStorage", {
-	value: mockLocalStorage,
-	writable: true,
-});
 
 const renderWithRouter = (component: React.ReactElement) => {
 	return render(<BrowserRouter>{component}</BrowserRouter>);
 };
 
+const mockWeatherData = {
+	name: "London",
+	main: {
+		temp: 15.5,
+		feels_like: 14.2,
+		humidity: 72,
+		pressure: 1013,
+	},
+	weather: [
+		{
+			main: "Clouds",
+			description: "broken clouds",
+			icon: "04d",
+		},
+	],
+	wind: {
+		speed: 3.6,
+	},
+	visibility: 10000,
+};
+
 describe("Task1 Component Integration", () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		mockLocalStorage.getItem.mockReturnValue(null);
-		// biome-ignore lint/suspicious/noEmptyBlockStatements: <never resolves>
-		mockLocalStorage.setItem.mockImplementation(() => {});
+		(global.fetch as jest.Mock).mockReset();
 	});
 
-	it("should render with default language (German)", () => {
-		renderWithRouter(<Task1 />);
-
-		expect(screen.getByText("Wolkenarten")).toBeInTheDocument();
-		expect(screen.getByText("Cumulus")).toBeInTheDocument();
-	});
-
-	it("should switch to English when English button is clicked", async () => {
-		renderWithRouter(<Task1 />);
-
-		const englishButton = screen.getByText("English");
-		act(() => {
-			fireEvent.click(englishButton);
-		});
-
-		await waitFor(() => {
-			expect(screen.getByText("Types of Clouds")).toBeInTheDocument();
-		});
-
-		expect(mockLocalStorage.setItem).toHaveBeenCalledWith("language", '"en"');
-	});
-
-	it("should switch to German when Deutsch button is clicked", async () => {
-		mockLocalStorage.getItem.mockReturnValue('"en"');
-
-		renderWithRouter(<Task1 />);
-
-		const deutschButton = screen.getByText("Deutsch");
-		act(() => {
-			fireEvent.click(deutschButton);
-		});
-
-		await waitFor(() => {
-			expect(screen.getByText("Wolkenarten")).toBeInTheDocument();
-		});
-
-		expect(mockLocalStorage.setItem).toHaveBeenCalledWith("language", '"de"');
-	});
-
-	it("should load saved language from localStorage", () => {
-		mockLocalStorage.getItem.mockReturnValue('"en"');
-
-		renderWithRouter(<Task1 />);
-
-		expect(screen.getByText("Types of Clouds")).toBeInTheDocument();
-		expect(mockLocalStorage.getItem).toHaveBeenCalledWith("language");
-	});
-
-	it("should handle reset button correctly", async () => {
-		mockLocalStorage.getItem.mockReturnValue('"en"');
-
-		renderWithRouter(<Task1 />);
-
-		const resetButton = screen.getByText("Reset - Clear localStorage");
-		act(() => {
-			fireEvent.click(resetButton);
-		});
-
-		await waitFor(() => {
-			expect(screen.getByText("Wolkenarten")).toBeInTheDocument();
-		});
-
-		expect(mockLocalStorage.removeItem).toHaveBeenCalledWith("language");
-	});
-
-	it("should display all cloud types in German", () => {
-		renderWithRouter(<Task1 />);
-
-		expect(screen.getByText("Cumulus")).toBeInTheDocument();
-		expect(screen.getByText("Stratus")).toBeInTheDocument();
-		expect(screen.getByText("Cirrus")).toBeInTheDocument();
-		expect(screen.getByText("Nimbus")).toBeInTheDocument();
-
-		expect(screen.getByText(/Weiße, flauschige Wolken/)).toBeInTheDocument();
-		expect(screen.getByText(/Graue, geschichtete Wolken/)).toBeInTheDocument();
-	});
-
-	it("should display all cloud types in English", async () => {
-		mockLocalStorage.getItem.mockReturnValue('"en"');
-
-		renderWithRouter(<Task1 />);
-
-		expect(screen.getByText(/White, fluffy clouds/)).toBeInTheDocument();
-		expect(screen.getByText(/Gray, layered clouds/)).toBeInTheDocument();
-	});
-
-	it("should handle corrupted localStorage gracefully", () => {
-		mockLocalStorage.getItem.mockReturnValue("invalid-json");
-		const consoleSpy = jest.spyOn(console, "error").mockImplementation();
-
-		renderWithRouter(<Task1 />);
-
-		// Should fall back to default (German)
-		expect(screen.getByText("Wolkenarten")).toBeInTheDocument();
-
-		consoleSpy.mockRestore();
-	});
-
-	it("should highlight selected language button", () => {
-		renderWithRouter(<Task1 />);
-
-		const deutschButton = screen.getByText("Deutsch");
-		const englishButton = screen.getByText("English");
-
-		// Default should be German
-		expect(deutschButton).toHaveClass("bg-primary");
-		expect(englishButton).not.toHaveClass("bg-primary");
-	});
-
-	it("should navigate back to task list", () => {
-		renderWithRouter(<Task1 />);
-
-		const backButton = screen.getByText("Back to Task List");
-		expect(backButton).toBeInTheDocument();
-		expect(backButton.closest("a")).toHaveAttribute("href", "/");
-	});
-
-	it("should handle localStorage setItem errors gracefully", async () => {
-		mockLocalStorage.setItem.mockImplementation(() => {
-			throw new Error("Storage quota exceeded");
-		});
-		const consoleSpy = jest.spyOn(console, "error").mockImplementation();
-
-		renderWithRouter(<Task1 />);
-
-		const englishButton = screen.getByText("English");
-		act(() => {
-			fireEvent.click(englishButton);
-		});
-
-		// Should still update the UI even if localStorage fails
-		await waitFor(() => {
-			expect(screen.getByText("Types of Clouds")).toBeInTheDocument();
-		});
-
-		expect(consoleSpy).toHaveBeenCalled();
-		consoleSpy.mockRestore();
-	});
-
-	it("should persist language selection across multiple changes", async () => {
-		renderWithRouter(<Task1 />);
-
-		// Switch to English
-		act(() => {
-			fireEvent.click(screen.getByText("English"));
-		});
-		await waitFor(() => {
-			expect(screen.getByText("Types of Clouds")).toBeInTheDocument();
-		});
-
-		// Switch back to German
-		act(() => {
-			fireEvent.click(screen.getByText("Deutsch"));
-		});
-		await waitFor(() => {
-			expect(screen.getByText("Wolkenarten")).toBeInTheDocument();
-		});
-
-		expect(mockLocalStorage.setItem).toHaveBeenCalledTimes(2);
-		expect(mockLocalStorage.setItem).toHaveBeenNthCalledWith(
-			1,
-			"language",
-			'"en"',
+	it("should show loading state initially", () => {
+		(global.fetch as jest.Mock).mockImplementation(
+			// biome-ignore lint/suspicious/noEmptyBlockStatements: <Never resolves>
+			() => new Promise(() => {}), //
 		);
-		expect(mockLocalStorage.setItem).toHaveBeenNthCalledWith(
-			2,
-			"language",
-			'"de"',
+
+		renderWithRouter(<Task1 />);
+
+		expect(screen.getByText("Loading weather data...")).toBeInTheDocument();
+	});
+
+	it("should display error message when fetch fails", async () => {
+		(global.fetch as jest.Mock).mockRejectedValueOnce(
+			new Error("Network error"),
 		);
+
+		renderWithRouter(<Task1 />);
+
+		await waitFor(() => {
+			expect(screen.getByText("Error: Network error")).toBeInTheDocument();
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.queryByText("Loading weather data..."),
+			).not.toBeInTheDocument();
+		});
+	});
+
+	it("should call API with correct URL", () => {
+		// biome-ignore lint/suspicious/noEmptyBlockStatements: <Never resolves>
+		(global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
+
+		renderWithRouter(<Task1 />);
+
+		expect(global.fetch).toHaveBeenCalledWith(
+			"https://api.openweathermap.org/data/2.5/weather?q=London&appid=0031d758ba088e9167c5079fc6515b39&units=metric&lang=en",
+		);
+	});
+
+	it("should display weather icon", async () => {
+		(global.fetch as jest.Mock).mockResolvedValueOnce({
+			ok: true,
+			json: async () => mockWeatherData,
+		});
+
+		renderWithRouter(<Task1 />);
+
+		await waitFor(() => {
+			const weatherIcon = screen.getByAltText("broken clouds");
+			expect(weatherIcon).toBeInTheDocument();
+			expect(weatherIcon).toHaveAttribute(
+				"src",
+				"https://openweathermap.org/img/wn/04d@2x.png",
+			);
+		});
+	});
+
+	it("should handle invalid JSON response", async () => {
+		(global.fetch as jest.Mock).mockResolvedValueOnce({
+			ok: true,
+			json: async () => {
+				throw new Error("Invalid JSON");
+			},
+		});
+
+		renderWithRouter(<Task1 />);
+
+		await waitFor(() => {
+			expect(screen.getByText("Error: Invalid JSON")).toBeInTheDocument();
+		});
+
+		await waitFor(() => {
+			expect(
+				screen.queryByText("Loading weather data..."),
+			).not.toBeInTheDocument();
+		});
+	});
+
+	it("should handle missing weather data fields gracefully", async () => {
+		const incompleteData = {
+			name: "London",
+			main: {
+				temp: 15.5,
+				feels_like: 14.2,
+				humidity: 72,
+				pressure: 1013,
+			},
+			weather: [
+				{
+					main: "Clouds",
+					description: "broken clouds",
+					icon: "04d",
+				},
+			],
+			wind: {
+				speed: 3.6,
+			},
+			// Missing visibility
+		};
+
+		(global.fetch as jest.Mock).mockImplementation(() =>
+			Promise.resolve({ ok: true, json: async () => incompleteData }),
+		);
+
+		renderWithRouter(<Task1 />);
+
+		await waitFor(() => {
+			expect(screen.getByText("London")).toBeInTheDocument();
+		});
+
+		// Should still display available data
+		expect(screen.getByText("15.5°C")).toBeInTheDocument();
+		expect(screen.getByText("3.6 m/s")).toBeInTheDocument();
+	});
+
+	it("should handle zero values correctly", async () => {
+		const zeroData = {
+			...mockWeatherData,
+			main: {
+				temp: 0,
+				feels_like: 0,
+				humidity: 0,
+				pressure: 0,
+			},
+			wind: {
+				speed: 0,
+			},
+			visibility: 0,
+		};
+
+		(global.fetch as jest.Mock).mockResolvedValueOnce({
+			ok: true,
+			json: async () => zeroData,
+		});
+
+		renderWithRouter(<Task1 />);
+
+		await waitFor(() => {
+			expect(
+				screen.getAllByText(
+					(content, element) =>
+						content.includes("0") && !!element?.textContent?.includes("°C"),
+				),
+			).toHaveLength(2);
+		});
+		const humSection = screen
+			.getByText("Humidity")
+			.closest("div") as HTMLElement;
+		expect(within(humSection).getByText("0%")).toBeInTheDocument();
+
+		const presSection = screen
+			.getByText("Pressure:")
+			.closest("div") as HTMLElement;
+		expect(within(presSection).getByText("0 hPa")).toBeInTheDocument();
+
+		const windSection = screen.getByText("Wind").closest("div") as HTMLElement;
+		expect(within(windSection).getByText("0 m/s")).toBeInTheDocument();
+
+		const visSection = screen
+			.getByText("Visibility")
+			.closest("div") as HTMLElement;
+		expect(within(visSection).getByText("0.0 km")).toBeInTheDocument();
+	});
+
+	it("should handle negative temperature values", async () => {
+		const coldData = {
+			...mockWeatherData,
+			main: {
+				...mockWeatherData.main,
+				temp: -5.5,
+				feels_like: -8.2,
+			},
+		};
+
+		(global.fetch as jest.Mock).mockResolvedValueOnce({
+			ok: true,
+			json: async () => coldData,
+		});
+
+		renderWithRouter(<Task1 />);
+
+		await waitFor(() => {
+			expect(
+				screen.getByText(
+					(content, element) =>
+						content.includes("-5.5") && !!element?.textContent?.includes("°C"),
+				),
+			).toBeInTheDocument();
+		});
+
+		expect(
+			screen.getByText(
+				(content, element) =>
+					content.includes("Feels like") &&
+					!!element?.textContent?.includes("-8.2") &&
+					!!element?.textContent?.includes("°C"),
+			),
+		).toBeInTheDocument();
 	});
 });

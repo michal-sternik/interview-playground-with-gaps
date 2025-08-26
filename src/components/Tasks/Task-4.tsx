@@ -1,70 +1,47 @@
-import {
-	ArrowLeft,
-	BadgeQuestionMark,
-	Cloud,
-	CloudRain,
-	CloudSnow,
-	Eye,
-	Sun,
-	Wind,
-	Zap,
-} from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { nanoid } from "nanoid";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
-// TASK 4: Implement WeatherIcon component with conditional rendering
+// TASK 4: Implement custom hook useLocalStorage
 //
-// GOAL: Create a component that displays the appropriate icon based on weather conditions
+// GOAL: Create a hook that allows storing and reading data from localStorage
+// The hook should return an array with the current value and a function to update it (similar to useState)
 //
 // REQUIREMENTS:
-// 1. The component should accept a 'condition' prop (string)
-// 2. Based on the condition value, it should render the appropriate icon from lucide-react
-// 3. Use conditional rendering (if/else, switch/case, or object mapping)
-// 4. Add appropriate colors for each icon using Tailwind CSS classes
-// 5. Handle unknown conditions with a default icon
+// 1. The hook should accept a key (string) and defaultValue (language: "en" | "de")
+// 2. Should return [value, setValue] where:
+//    - value: "en" | "de" - current value from localStorage or defaultValue
+//    - setValue: (value: "en" | "de") => void - function to update the value
+// 3. The value should be automatically saved to localStorage whenever it changes
+// 4. On first load, it should read the value from localStorage or use the default value
+// 5. Handle edge cases
+// 6. Handle JSON parsing errors
+// 7. Comment "const [language, setLanguage] = (() => ["de", () => {}])();"
+// 8. Uncomment "const [language, setLanguage] = useLocalStorage("language", "de");"
 //
-// CONDITIONS TO HANDLE:
-// - "sunny" or "clear" → Sun icon (yellow-500)
-// - "cloudy" or "partly cloudy" → Cloud icon (slate-500)
-// - "rainy" or "rain" → CloudRain icon (blue-500)
-// - "snowy" or "snow" → CloudSnow icon (blue-300)
-// - "stormy" or "thunderstorm" → Zap icon (purple-500)
-// - "foggy" or "mist" → Eye icon (slate-500)
-// - "windy" → Wind icon (green-500)
-// - default → Sun icon (yellow-500)
-//
-// COMPONENT INTERFACE:
-// interface WeatherIconProps {
-//   condition: string    // Weather condition (e.g., "sunny", "rainy")
-// }
+// EXAMPLE USAGE:
+// const [language, setLanguage] = useLocalStorage("language", "de");
+// setLanguage('en') // This should save 'en' to localStorage under key 'language'
 
-export interface WeatherIconProps {
-	condition: string;
+// TODO: Implement the useLocalStorage hook below
+type Language = "en" | "de";
+
+export function useLocalStorage(key: string, defaultValue: Language) {
+	// REMOVE BEFORE HANDOVER: The code below is a complete implementation - remove it and let the candidate write their own
+	// END OF CODE TO REMOVE
 }
-
-// TODO: Implement the WeatherIcon component below
-export function WeatherIcon({ condition }: WeatherIconProps) {
-	//delete
-	return <BadgeQuestionMark />;
-}
-
-// Sample weather data for different cities
 
 export default function Task4() {
-	const [selectedCondition, setSelectedCondition] = useState("sunny");
+	// Using the useLocalStorage hook to store the selected language
 
-	const conditions = [
-		"sunny",
-		"cloudy",
-		"rainy",
-		"snowy",
-		"stormy",
-		"foggy",
-		"windy",
-		"partly cloudy",
-	];
+	// const [language, setLanguage] = useLocalStorage("language", "de");
+
+	// biome-ignore lint/suspicious/noEmptyBlockStatements: <only for placeholder purposes>
+	const [language, setLanguage] = (() => ["de", (_: "en" | "de") => {}])();
+
+	const currentData = cloudData[language as Language];
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
@@ -76,84 +53,61 @@ export default function Task4() {
 							Back to Task List
 						</Button>
 					</Link>
+
+					<Card className="mb-6">
+						<CardContent>
+							<div className="flex gap-2 items-center">
+								<Button
+									onClick={() => setLanguage("en")}
+									variant={language === "en" ? "default" : "outline"}
+									size="sm"
+									className="cursor-pointer"
+								>
+									English
+								</Button>
+								<Button
+									onClick={() => setLanguage("de")}
+									variant={language === "de" ? "default" : "outline"}
+									size="sm"
+									className="cursor-pointer"
+								>
+									Deutsch
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									className="ml-auto"
+									onClick={() => {
+										localStorage.removeItem("language");
+										setLanguage("de");
+									}}
+								>
+									Reset - Clear localStorage
+								</Button>
+							</div>
+						</CardContent>
+					</Card>
 				</div>
 
-				{/* Interactive test */}
-				<Card className="mb-6">
-					<CardHeader>
-						<CardTitle>Interactive Test</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="space-y-4">
-							<p className="text-slate-500">
-								Select weather conditions to test the component:
-							</p>
-							<div className="flex flex-wrap gap-2">
-								{conditions.map((condition) => (
-									<Button
-										key={condition}
-										onClick={() => setSelectedCondition(condition)}
-										variant={
-											selectedCondition === condition ? "default" : "outline"
-										}
-										size="sm"
-										className="capitalize"
-									>
-										{condition}
-									</Button>
-								))}
-							</div>
-
-							<Card className="bg-white/50 max-w-sm">
-								<CardContent className="pt-6">
-									<div className="flex items-center gap-4">
-										<WeatherIcon condition={selectedCondition} />
-										<div>
-											<p className="font-semibold capitalize">
-												{selectedCondition}
-											</p>
-											<p className="text-sm text-slate-500">
-												Test weather icon
-											</p>
-										</div>
-									</div>
-								</CardContent>
-							</Card>
-						</div>
-					</CardContent>
-				</Card>
-
-				{/* Sample weather data */}
 				<Card>
 					<CardHeader>
-						<CardTitle>Weather in Europe</CardTitle>
+						<CardTitle className="text-2xl">{currentData.title}</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-							{weatherData.map((weather, index) => (
-								<Card
-									key={index}
-									className="bg-white/50 hover:bg-white/80 transition-colors"
-								>
-									<CardContent className="pt-4">
-										<div className="flex items-center justify-between mb-2">
-											<h3 className="font-semibold">{weather.city}</h3>
-											<WeatherIcon condition={weather.condition} />
-										</div>
-										<div className="space-y-1">
-											<p className="text-2xl font-bold">
-												{weather.temperature}°C
-											</p>
-											<p className="text-sm text-slate-500">
-												{weather.description}
-											</p>
-											<p className="text-xs text-slate-500 capitalize">
-												Condition: {weather.condition}
-											</p>
-										</div>
-									</CardContent>
-								</Card>
-							))}
+						<div className="grid md:grid-cols-2 gap-4">
+							{currentData.clouds.map((cloud) => {
+								const id = nanoid();
+								return (
+									<Card key={id} className="bg-white/50">
+										<CardHeader>
+											<CardTitle className="text-lg">{cloud.name}</CardTitle>
+										</CardHeader>
+										<CardContent>
+											<p className="text-gray-600">{cloud.description}</p>
+										</CardContent>
+									</Card>
+								);
+							})}
 						</div>
 					</CardContent>
 				</Card>
@@ -161,28 +115,56 @@ export default function Task4() {
 		</div>
 	);
 }
-const weatherData = [
-	{ city: "London", condition: "sunny", temperature: 22, description: "Sunny" },
-	{
-		city: "Paris",
-		condition: "cloudy",
-		temperature: 18,
-		description: "Cloudy",
+
+// Cloud data in different languages (German text for translation task)
+const cloudData = {
+	en: {
+		title: "Types of Clouds",
+		clouds: [
+			{
+				name: "Cumulus",
+				description:
+					"White, fluffy clouds with distinct shapes. Usually indicate good weather.",
+			},
+			{
+				name: "Stratus",
+				description:
+					"Gray, layered clouds covering the entire sky. May bring drizzle.",
+			},
+			{
+				name: "Cirrus",
+				description:
+					"High, thin clouds resembling feathers. Made of ice crystals.",
+			},
+			{
+				name: "Nimbus",
+				description: "Dark rain clouds. Bring atmospheric precipitation.",
+			},
+		],
 	},
-	{ city: "Berlin", condition: "rainy", temperature: 15, description: "Rainy" },
-	{ city: "Moscow", condition: "snowy", temperature: -2, description: "Snowy" },
-	{ city: "Rome", condition: "stormy", temperature: 16, description: "Stormy" },
-	{
-		city: "Amsterdam",
-		condition: "foggy",
-		temperature: 12,
-		description: "Foggy",
+	de: {
+		title: "Wolkenarten",
+		clouds: [
+			{
+				name: "Cumulus",
+				description:
+					"Weiße, flauschige Wolken mit deutlichen Formen. Zeigen normalerweise gutes Wetter an.",
+			},
+			{
+				name: "Stratus",
+				description:
+					"Graue, geschichtete Wolken, die den ganzen Himmel bedecken. Können Nieselregen bringen.",
+			},
+			{
+				name: "Cirrus",
+				description:
+					"Hohe, dünne Wolken, die Federn ähneln. Bestehen aus Eiskristallen.",
+			},
+			{
+				name: "Nimbus",
+				description:
+					"Dunkle Regenwolken. Bringen atmosphärische Niederschläge.",
+			},
+		],
 	},
-	{ city: "Madrid", condition: "windy", temperature: 19, description: "Windy" },
-	{
-		city: "Vienna",
-		condition: "partly cloudy",
-		temperature: 20,
-		description: "Partly Cloudy",
-	},
-];
+};
