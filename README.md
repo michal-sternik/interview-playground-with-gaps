@@ -57,7 +57,7 @@ After completing each task, run unit tests to verify your solution:
 ```
 npm run test
 ```
-OR (if you cloned this repo):
+OR (after typing 'git init'):
 ```
 npm run test:watch
 ```
