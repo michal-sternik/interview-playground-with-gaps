@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 // REQUIREMENTS:
 // 1. The component should accept a 'condition' prop (string)
 // 2. Based on the condition value, it should render the appropriate icon from lucide-react
-// 3. Use conditional rendering (if/else, switch/case, or object mapping)
+// 3. Use conditional rendering (object mapping)
 // 4. Add appropriate colors for each icon using Tailwind CSS classes
 // 5. Handle unknown conditions with a default icon
 //

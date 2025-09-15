@@ -29,15 +29,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 type Language = "en" | "de";
 
 export function useLocalStorage(key: string, defaultValue: Language) {
-	// REMOVE BEFORE HANDOVER: The code below is a complete implementation - remove it and let the candidate write their own
-	// END OF CODE TO REMOVE
+	//code here
 }
 
 export default function Task4() {
 	// Using the useLocalStorage hook to store the selected language
-
+	// uncomment
 	// const [language, setLanguage] = useLocalStorage("language", "de");
 
+	// comment after useLocalStorage hook is finished
 	// biome-ignore lint/suspicious/noEmptyBlockStatements: <only for placeholder purposes>
 	const [language, setLanguage] = (() => ["de", (_: "en" | "de") => {}])();
 
