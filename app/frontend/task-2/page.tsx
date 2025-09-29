@@ -1,20 +1,19 @@
 "use client";
 
-import type React from "react";
-
 import {
-  ArrowLeft,
-  MessageCircleQuestion,
-  Cloud,
-  CloudRain,
-  CloudSnow,
-  Eye,
-  Sun,
-  Wind,
-  Zap,
+	ArrowLeft,
+	Cloud,
+	CloudRain,
+	CloudSnow,
+	Eye,
+	MessageCircleQuestion,
+	Sun,
+	Wind,
+	Zap,
 } from "lucide-react";
-import { useState } from "react";
 import Link from "next/link";
+import type React from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -45,147 +44,147 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // }
 
 export interface WeatherIconProps {
-  condition: string;
+	condition: string;
 }
 
 // TODO: Implement the WeatherIcon component below
 export function WeatherIcon({ condition }: WeatherIconProps) {
-  //delete
-  return <MessageCircleQuestion />;
+	//delete
+	return <MessageCircleQuestion />;
 }
 
 export default function Task2() {
-  const [selectedCondition, setSelectedCondition] = useState("sunny");
+	const [selectedCondition, setSelectedCondition] = useState("sunny");
 
-  const conditions = [
-    "sunny",
-    "cloudy",
-    "rainy",
-    "snowy",
-    "stormy",
-    "foggy",
-    "windy",
-    "partly cloudy",
-  ];
+	const conditions = [
+		"sunny",
+		"cloudy",
+		"rainy",
+		"snowy",
+		"stormy",
+		"foggy",
+		"windy",
+		"partly cloudy",
+	];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Link href="/">
-            <Button variant="outline" className="mb-4 bg-transparent">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Task List
-            </Button>
-          </Link>
-        </div>
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+			<div className="max-w-4xl mx-auto">
+				<div className="mb-6">
+					<Link href="/">
+						<Button variant="outline" className="mb-4 bg-transparent">
+							<ArrowLeft className="h-4 w-4 mr-2" />
+							Back to Task List
+						</Button>
+					</Link>
+				</div>
 
-        {/* Interactive test */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Interactive Test</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-slate-500">
-                Select weather conditions to test the component:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {conditions.map((condition) => (
-                  <Button
-                    key={condition}
-                    onClick={() => setSelectedCondition(condition)}
-                    variant={
-                      selectedCondition === condition ? "default" : "outline"
-                    }
-                    size="sm"
-                    className="capitalize"
-                  >
-                    {condition}
-                  </Button>
-                ))}
-              </div>
+				{/* Interactive test */}
+				<Card className="mb-6">
+					<CardHeader>
+						<CardTitle>Interactive Test</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-4">
+							<p className="text-slate-500">
+								Select weather conditions to test the component:
+							</p>
+							<div className="flex flex-wrap gap-2">
+								{conditions.map((condition) => (
+									<Button
+										key={condition}
+										onClick={() => setSelectedCondition(condition)}
+										variant={
+											selectedCondition === condition ? "default" : "outline"
+										}
+										size="sm"
+										className="capitalize"
+									>
+										{condition}
+									</Button>
+								))}
+							</div>
 
-              <Card className="bg-white/50 max-w-sm">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-4">
-                    <WeatherIcon condition={selectedCondition} />
-                    <div>
-                      <p className="font-semibold capitalize">
-                        {selectedCondition}
-                      </p>
-                      <p className="text-sm text-slate-500">
-                        Test weather icon
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </CardContent>
-        </Card>
+							<Card className="bg-white/50 max-w-sm">
+								<CardContent className="pt-6">
+									<div className="flex items-center gap-4">
+										<WeatherIcon condition={selectedCondition} />
+										<div>
+											<p className="font-semibold capitalize">
+												{selectedCondition}
+											</p>
+											<p className="text-sm text-slate-500">
+												Test weather icon
+											</p>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+						</div>
+					</CardContent>
+				</Card>
 
-        {/* Sample weather data */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Weather in Europe</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {weatherData.map((weather, index) => (
-                <Card
-                  key={index}
-                  className="bg-white/50 hover:bg-white/80 transition-colors"
-                >
-                  <CardContent className="pt-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold">{weather.city}</h3>
-                      <WeatherIcon condition={weather.condition} />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-2xl font-bold">
-                        {weather.temperature}°C
-                      </p>
-                      <p className="text-sm text-slate-500">
-                        {weather.description}
-                      </p>
-                      <p className="text-xs text-slate-500 capitalize">
-                        Condition: {weather.condition}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+				{/* Sample weather data */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Weather in Europe</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+							{weatherData.map((weather, index) => (
+								<Card
+									key={index}
+									className="bg-white/50 hover:bg-white/80 transition-colors"
+								>
+									<CardContent className="pt-4">
+										<div className="flex items-center justify-between mb-2">
+											<h3 className="font-semibold">{weather.city}</h3>
+											<WeatherIcon condition={weather.condition} />
+										</div>
+										<div className="space-y-1">
+											<p className="text-2xl font-bold">
+												{weather.temperature}°C
+											</p>
+											<p className="text-sm text-slate-500">
+												{weather.description}
+											</p>
+											<p className="text-xs text-slate-500 capitalize">
+												Condition: {weather.condition}
+											</p>
+										</div>
+									</CardContent>
+								</Card>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+			</div>
+		</div>
+	);
 }
 
 const weatherData = [
-  { city: "London", condition: "sunny", temperature: 22, description: "Sunny" },
-  {
-    city: "Paris",
-    condition: "cloudy",
-    temperature: 18,
-    description: "Cloudy",
-  },
-  { city: "Berlin", condition: "rainy", temperature: 15, description: "Rainy" },
-  { city: "Moscow", condition: "snowy", temperature: -2, description: "Snowy" },
-  { city: "Rome", condition: "stormy", temperature: 16, description: "Stormy" },
-  {
-    city: "Amsterdam",
-    condition: "foggy",
-    temperature: 12,
-    description: "Foggy",
-  },
-  { city: "Madrid", condition: "windy", temperature: 19, description: "Windy" },
-  {
-    city: "Vienna",
-    condition: "partly cloudy",
-    temperature: 20,
-    description: "Partly Cloudy",
-  },
+	{ city: "London", condition: "sunny", temperature: 22, description: "Sunny" },
+	{
+		city: "Paris",
+		condition: "cloudy",
+		temperature: 18,
+		description: "Cloudy",
+	},
+	{ city: "Berlin", condition: "rainy", temperature: 15, description: "Rainy" },
+	{ city: "Moscow", condition: "snowy", temperature: -2, description: "Snowy" },
+	{ city: "Rome", condition: "stormy", temperature: 16, description: "Stormy" },
+	{
+		city: "Amsterdam",
+		condition: "foggy",
+		temperature: 12,
+		description: "Foggy",
+	},
+	{ city: "Madrid", condition: "windy", temperature: 19, description: "Windy" },
+	{
+		city: "Vienna",
+		condition: "partly cloudy",
+		temperature: 20,
+		description: "Partly Cloudy",
+	},
 ];

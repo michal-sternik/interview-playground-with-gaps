@@ -1,13 +1,13 @@
-import { type NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
+import { type NextRequest, NextResponse } from "next/server";
 import path from "path";
 
 const JSON_FILE = path.join(
-  process.cwd(),
-  "app",
-  "api",
-  "backend-task-4",
-  "data.json"
+	process.cwd(),
+	"app",
+	"api",
+	"backend-task-4",
+	"data.json",
 );
 
 // TODO: Implement simple JSON file update endpoints

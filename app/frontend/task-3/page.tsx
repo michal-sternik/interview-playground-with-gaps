@@ -1,8 +1,8 @@
 "use client";
 
 import { ArrowLeft, MapPin } from "lucide-react";
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -34,262 +34,262 @@ import { Input } from "@/components/ui/input";
 // TODO: Implement the useDebounce hook below
 
 export function useDebounce(value: string, delay: number) {
-  //delete
-  return null;
+	//delete
+	return null;
 }
 
 // Simulated city data (in a real app, this would be fetched from an API)
 
 export default function Task3() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchCount, setSearchCount] = useState(0);
+	const [searchTerm, setSearchTerm] = useState("");
+	const [searchCount, setSearchCount] = useState(0);
 
-  // Using the useDebounce hook to delay search
-  // Delete "|| searchTerm after useDebounce hook is finished"
-  const debouncedSearchTerm = useDebounce(searchTerm, 500) || searchTerm;
+	// Using the useDebounce hook to delay search
+	// Delete "|| searchTerm after useDebounce hook is finished"
+	const debouncedSearchTerm = useDebounce(searchTerm, 500) || searchTerm;
 
-  // Simulate city search
-  const filteredCities = debouncedSearchTerm
-    ? cities.filter((city) =>
-        city.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-      )
-    : [];
+	// Simulate city search
+	const filteredCities = debouncedSearchTerm
+		? cities.filter((city) =>
+				city.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
+			)
+		: [];
 
-  // Search call counter (to demonstrate debounce effectiveness)
-  useEffect(() => {
-    if (debouncedSearchTerm) {
-      setSearchCount((prev) => prev + 1);
-    }
-  }, [debouncedSearchTerm]);
+	// Search call counter (to demonstrate debounce effectiveness)
+	useEffect(() => {
+		if (debouncedSearchTerm) {
+			setSearchCount((prev) => prev + 1);
+		}
+	}, [debouncedSearchTerm]);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <Link href="/">
-            <Button variant="outline" className="mb-4 bg-transparent">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Task List
-            </Button>
-          </Link>
-        </div>
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+			<div className="max-w-4xl mx-auto">
+				<div className="mb-6">
+					<Link href="/">
+						<Button variant="outline" className="mb-4 bg-transparent">
+							<ArrowLeft className="h-4 w-4 mr-2" />
+							Back to Task List
+						</Button>
+					</Link>
+				</div>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Search Cities</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Input
-                type="text"
-                placeholder="Type city name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="max-w-md"
-              />
+				<Card className="mb-6">
+					<CardHeader>
+						<CardTitle>Search Cities</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-4">
+							<Input
+								type="text"
+								placeholder="Type city name..."
+								value={searchTerm}
+								onChange={(e) => setSearchTerm(e.target.value)}
+								className="max-w-md"
+							/>
 
-              <div className="flex gap-4 text-sm text-gray-600">
-                <span>Typed text: "{searchTerm}"</span>
-                <span>Searched text: "{debouncedSearchTerm}"</span>
-                <span className="font-semibold">
-                  Search calls: {searchCount}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+							<div className="flex gap-4 text-sm text-gray-600">
+								<span>Typed text: "{searchTerm}"</span>
+								<span>Searched text: "{debouncedSearchTerm}"</span>
+								<span className="font-semibold">
+									Search calls: {searchCount}
+								</span>
+							</div>
+						</div>
+					</CardContent>
+				</Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Search Results ({filteredCities.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {filteredCities.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
-                {filteredCities.map((city, index) => (
-                  <Card
-                    key={index}
-                    className="bg-white/50 hover:bg-white/80 transition-colors cursor-pointer"
-                  >
-                    <CardContent className="pt-4">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-blue-500" />
-                        <span className="font-medium">{city}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 text-center py-8">
-                No cities found matching "{debouncedSearchTerm}"
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<MapPin className="h-5 w-5" />
+							Search Results ({filteredCities.length})
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						{filteredCities.length > 0 ? (
+							<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
+								{filteredCities.map((city, index) => (
+									<Card
+										key={index}
+										className="bg-white/50 hover:bg-white/80 transition-colors cursor-pointer"
+									>
+										<CardContent className="pt-4">
+											<div className="flex items-center gap-2">
+												<MapPin className="h-4 w-4 text-blue-500" />
+												<span className="font-medium">{city}</span>
+											</div>
+										</CardContent>
+									</Card>
+								))}
+							</div>
+						) : (
+							<p className="text-gray-500 text-center py-8">
+								No cities found matching "{debouncedSearchTerm}"
+							</p>
+						)}
+					</CardContent>
+				</Card>
+			</div>
+		</div>
+	);
 }
 
 const cities = [
-  "Tokyo",
-  "Delhi",
-  "Shanghai",
-  "São Paulo",
-  "Mexico City",
-  "Cairo",
-  "Mumbai",
-  "Beijing",
-  "Dhaka",
-  "Osaka",
-  "New York City",
-  "Karachi",
-  "Buenos Aires",
-  "Chongqing",
-  "Istanbul",
-  "Kolkata",
-  "Manila",
-  "Lagos",
-  "Rio de Janeiro",
-  "Tianjin",
-  "Kinshasa",
-  "Guangzhou",
-  "Los Angeles",
-  "Moscow",
-  "Shenzhen",
-  "Lahore",
-  "Bangalore",
-  "Paris",
-  "Bogotá",
-  "Jakarta",
-  "London",
-  "Lima",
-  "Bangkok",
-  "Tehran",
-  "Ho Chi Minh City",
-  "Hong Kong",
-  "Hyderabad",
-  "Chicago",
-  "Nagoya",
-  "Taipei",
-  "Santiago",
-  "Riyadh",
-  "Madrid",
-  "Dallas",
-  "Toronto",
-  "Miami",
-  "Philadelphia",
-  "Houston",
-  "Singapore",
-  "Washington D.C.",
-  "Barcelona",
-  "San Francisco",
-  "Boston",
-  "Sydney",
-  "Melbourne",
-  "Montreal",
-  "Berlin",
-  "Rome",
-  "Athens",
-  "Brussels",
-  "Vienna",
-  "Warsaw",
-  "Budapest",
-  "Prague",
-  "Munich",
-  "Stockholm",
-  "Copenhagen",
-  "Dublin",
-  "Lisbon",
-  "Zurich",
-  "Geneva",
-  "Oslo",
-  "Helsinki",
-  "Edinburgh",
-  "Glasgow",
-  "Birmingham",
-  "Manchester",
-  "Liverpool",
-  "Leeds",
-  "Sheffield",
-  "Newcastle",
-  "Nottingham",
-  "Bristol",
-  "Leicester",
-  "Southampton",
-  "Portland",
-  "Seattle",
-  "Denver",
-  "Phoenix",
-  "San Diego",
-  "Las Vegas",
-  "Orlando",
-  "Atlanta",
-  "Detroit",
-  "Minneapolis",
-  "St. Louis",
-  "Tampa",
-  "Charlotte",
-  "Pittsburgh",
-  "Cleveland",
-  "Cincinnati",
-  "Kansas City",
-  "Indianapolis",
-  "Columbus",
-  "Milwaukee",
-  "Sacramento",
-  "Salt Lake City",
-  "San Jose",
-  "Austin",
-  "Fort Worth",
-  "El Paso",
-  "Memphis",
-  "Nashville",
-  "Louisville",
-  "Baltimore",
-  "Oklahoma City",
-  "Albuquerque",
-  "Tucson",
-  "Fresno",
-  "Mesa",
-  "Long Beach",
-  "Oakland",
-  "Bakersfield",
-  "Anaheim",
-  "Honolulu",
-  "Anchorage",
-  "Raleigh",
-  "Richmond",
-  "Virginia Beach",
-  "Jacksonville",
-  "Miami Beach",
-  "Tallahassee",
-  "Fort Lauderdale",
-  "West Palm Beach",
-  "Boca Raton",
-  "Naples",
-  "Sarasota",
-  "Clearwater",
-  "St. Petersburg",
-  "Tampa Bay",
-  "Pensacola",
-  "Mobile",
-  "Montgomery",
-  "Huntsville",
-  "Tuscaloosa",
-  "Little Rock",
-  "Fayetteville",
-  "Springdale",
-  "Jonesboro",
-  "Texarkana",
-  "Hot Springs",
-  "Conway",
-  "Pine Bluff",
-  "Fort Smith",
-  "Rogers",
-  "Bentonville",
+	"Tokyo",
+	"Delhi",
+	"Shanghai",
+	"São Paulo",
+	"Mexico City",
+	"Cairo",
+	"Mumbai",
+	"Beijing",
+	"Dhaka",
+	"Osaka",
+	"New York City",
+	"Karachi",
+	"Buenos Aires",
+	"Chongqing",
+	"Istanbul",
+	"Kolkata",
+	"Manila",
+	"Lagos",
+	"Rio de Janeiro",
+	"Tianjin",
+	"Kinshasa",
+	"Guangzhou",
+	"Los Angeles",
+	"Moscow",
+	"Shenzhen",
+	"Lahore",
+	"Bangalore",
+	"Paris",
+	"Bogotá",
+	"Jakarta",
+	"London",
+	"Lima",
+	"Bangkok",
+	"Tehran",
+	"Ho Chi Minh City",
+	"Hong Kong",
+	"Hyderabad",
+	"Chicago",
+	"Nagoya",
+	"Taipei",
+	"Santiago",
+	"Riyadh",
+	"Madrid",
+	"Dallas",
+	"Toronto",
+	"Miami",
+	"Philadelphia",
+	"Houston",
+	"Singapore",
+	"Washington D.C.",
+	"Barcelona",
+	"San Francisco",
+	"Boston",
+	"Sydney",
+	"Melbourne",
+	"Montreal",
+	"Berlin",
+	"Rome",
+	"Athens",
+	"Brussels",
+	"Vienna",
+	"Warsaw",
+	"Budapest",
+	"Prague",
+	"Munich",
+	"Stockholm",
+	"Copenhagen",
+	"Dublin",
+	"Lisbon",
+	"Zurich",
+	"Geneva",
+	"Oslo",
+	"Helsinki",
+	"Edinburgh",
+	"Glasgow",
+	"Birmingham",
+	"Manchester",
+	"Liverpool",
+	"Leeds",
+	"Sheffield",
+	"Newcastle",
+	"Nottingham",
+	"Bristol",
+	"Leicester",
+	"Southampton",
+	"Portland",
+	"Seattle",
+	"Denver",
+	"Phoenix",
+	"San Diego",
+	"Las Vegas",
+	"Orlando",
+	"Atlanta",
+	"Detroit",
+	"Minneapolis",
+	"St. Louis",
+	"Tampa",
+	"Charlotte",
+	"Pittsburgh",
+	"Cleveland",
+	"Cincinnati",
+	"Kansas City",
+	"Indianapolis",
+	"Columbus",
+	"Milwaukee",
+	"Sacramento",
+	"Salt Lake City",
+	"San Jose",
+	"Austin",
+	"Fort Worth",
+	"El Paso",
+	"Memphis",
+	"Nashville",
+	"Louisville",
+	"Baltimore",
+	"Oklahoma City",
+	"Albuquerque",
+	"Tucson",
+	"Fresno",
+	"Mesa",
+	"Long Beach",
+	"Oakland",
+	"Bakersfield",
+	"Anaheim",
+	"Honolulu",
+	"Anchorage",
+	"Raleigh",
+	"Richmond",
+	"Virginia Beach",
+	"Jacksonville",
+	"Miami Beach",
+	"Tallahassee",
+	"Fort Lauderdale",
+	"West Palm Beach",
+	"Boca Raton",
+	"Naples",
+	"Sarasota",
+	"Clearwater",
+	"St. Petersburg",
+	"Tampa Bay",
+	"Pensacola",
+	"Mobile",
+	"Montgomery",
+	"Huntsville",
+	"Tuscaloosa",
+	"Little Rock",
+	"Fayetteville",
+	"Springdale",
+	"Jonesboro",
+	"Texarkana",
+	"Hot Springs",
+	"Conway",
+	"Pine Bluff",
+	"Fort Smith",
+	"Rogers",
+	"Bentonville",
 ];

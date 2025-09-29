@@ -1,9 +1,9 @@
 {
-  "user": {
-    "name": "John Doea"
-  },
-  "version": "asda",
-  "settings": {
-    "theme": "dark"
-  }
+	"user": {
+		"name": "John Doea"
+	},
+	"version": "asda",
+	"settings": {
+		"theme": "dark"
+	}
 }

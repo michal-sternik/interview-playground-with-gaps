@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getLogs, addLog } from "../logger";
+import { addLog, getLogs } from "../logger";
 
 // TODO: Implement logs viewing endpoint
 // INSTRUCTIONS:

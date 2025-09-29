@@ -1,9 +1,9 @@
 interface LogEntry {
-  timestamp: string;
-  method: string;
-  url: string;
-  status: number;
-  duration: number;
+	timestamp: string;
+	method: string;
+	url: string;
+	status: number;
+	duration: number;
 }
 
 const requestLogs: LogEntry[] = [];
@@ -19,12 +19,14 @@ const requestLogs: LogEntry[] = [];
 // Implement getLogs() to retrieve all stored logs for display in reversed order.
 
 export function addLog(
-  method: string,
-  url: string,
-  status: number,
-  duration: number
-) {}
+	method: string,
+	url: string,
+	status: number,
+	duration: number,
+) {
+	return null;
+}
 
 export function getLogs(): LogEntry[] {
-  return null as unknown as LogEntry[];
+	return null as unknown as LogEntry[];
 }

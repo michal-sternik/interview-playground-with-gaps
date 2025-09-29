@@ -1,21 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-export const tasks: TaskItem[] = [
-  {
-    id: Date.now().toString(),
-    title: "Example Task",
-    description: "This is an example task.",
-    completed: false,
-    createdAt: new Date().toISOString(),
-  },
-];
+export const tasks: TaskItem[] = [];
 
 interface TaskItem {
-  id: string;
-  title: string;
-  description: string;
-  completed: boolean;
-  createdAt: string;
+	id: string;
+	title: string;
+	description: string;
+	completed: boolean;
+	createdAt: string;
 }
 
 // TODO: Implement in-memory storage for tasks

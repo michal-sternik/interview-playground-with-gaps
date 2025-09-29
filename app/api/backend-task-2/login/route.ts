@@ -5,7 +5,7 @@ const tokens = new Map<string, string>();
 
 // Hardcoded users for this task
 const users: Record<string, string> = {
-  user: "password123",
+	user: "password123",
 };
 
 // TODO: Implement token-based authentication
